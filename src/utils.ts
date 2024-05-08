@@ -4,11 +4,19 @@ import {
     getDailyNote,
     createDailyNote,
     getAllDailyNotes,
+    getWeeklyNote,
+    createWeeklyNote,
+    getAllWeeklyNotes,
 } from 'obsidian-daily-notes-interface'
 import {
     TaskRegularExpressions,
     type TaskComponents,
 } from 'serializer/TaskModels'
+
+export {
+    appHasDailyNotesPluginLoaded,
+    appHasWeeklyNotesPluginLoaded,
+} from 'obsidian-daily-notes-interface'
 
 export function getTemplater(app: App) {
     return app.plugins.plugins['templater-obsidian']
@@ -98,6 +106,14 @@ export const getDailyNoteFile = async (): Promise<TFile> => {
     const file = getDailyNote(moment() as any, getAllDailyNotes())
     if (!file) {
         return await createDailyNote(moment() as any)
+    }
+    return file
+}
+
+export const getWeeklyNoteFile = async (): Promise<TFile> => {
+    const file = getWeeklyNote(moment() as any, getAllWeeklyNotes())
+    if (!file) {
+        return await createWeeklyNote(moment() as any)
     }
     return file
 }

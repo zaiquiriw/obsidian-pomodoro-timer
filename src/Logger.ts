@@ -91,6 +91,11 @@ export default class Logger {
             return await utils.getDailyNoteFile()
         }
 
+        // use weekly note
+        if (settings.logFile == 'WEEKLY') {
+            return await utils.getWeeklyNoteFile()
+        }
+
         // log to file
         if (settings.logFile === 'FILE') {
             if (settings.logPath) {

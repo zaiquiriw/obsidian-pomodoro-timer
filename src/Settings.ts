@@ -3,9 +3,13 @@ import { DropdownComponent } from 'obsidian'
 import { PluginSettingTab, Setting, moment } from 'obsidian'
 import type { Unsubscriber } from 'svelte/motion'
 import { writable, type Writable } from 'svelte/store'
-import { getTemplater } from 'utils'
+import { 
+  appHasDailyNotesPluginLoaded,
+  appHasWeeklyNotesPluginLoaded,
+  getTemplater
+} from 'utils'
 
-type LogFileType = 'DAILY' | 'FILE' | 'NONE'
+type LogFileType = 'DAILY' | 'WEEKLY' | 'FILE' | 'NONE'
 type LogLevel = 'ALL' | 'WORK' | 'BREAK'
 type LogFormat = 'SIMPLE' | 'VERBOSE' | 'CUSTOM'
 export type TaskFormat = 'TASKS' | 'DATAVIEW'
@@ -184,11 +188,14 @@ export default class PomodoroSettings extends PluginSettingTab {
         new Setting(containerEl).setHeading().setName('Log')
         new Setting(containerEl).setName('Log File').addDropdown((dropdown) => {
             dropdown.selectEl.style.width = '160px'
-            dropdown.addOptions({
-                NONE: 'None',
-                DAILY: 'Daily note',
-                FILE: 'File',
-            })
+            dropdown.addOptions({ NONE: 'None' })
+            if (appHasDailyNotesPluginLoaded()) {
+              dropdown.addOptions({ DAILY: 'Daily note' });
+            }
+            if (appHasWeeklyNotesPluginLoaded()) {
+              dropdown.addOptions({ WEEKLY: 'Weekly note' });
+            }
+            dropdown.addOptions({ FILE: 'File' })
             dropdown.setValue(this._settings.logFile)
             dropdown.onChange((value: string) => {
                 this.updateSettings({ logFile: value as LogFileType }, true)
