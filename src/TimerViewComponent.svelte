@@ -13,7 +13,7 @@ export let render: (content: string, el: HTMLElement) => void
 let extra: 'settings' | 'tasks' | 'close' = 'tasks'
 const offset = 440
 
-$: strokeOffset = ($timer.remained.millis * offset) / $timer.count
+$: strokeOffset = $timer.remained.millis * offset / $timer.count
 
 const start = () => {
     if (!$timer.running) {

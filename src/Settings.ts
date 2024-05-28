@@ -3,10 +3,10 @@ import { DropdownComponent } from 'obsidian'
 import { PluginSettingTab, Setting, moment } from 'obsidian'
 import type { Unsubscriber } from 'svelte/motion'
 import { writable, type Writable } from 'svelte/store'
-import { 
-  appHasDailyNotesPluginLoaded,
-  appHasWeeklyNotesPluginLoaded,
-  getTemplater
+import {
+    appHasDailyNotesPluginLoaded,
+    appHasWeeklyNotesPluginLoaded,
+    getTemplater,
 } from 'utils'
 
 type LogFileType = 'DAILY' | 'WEEKLY' | 'FILE' | 'NONE'
@@ -31,6 +31,7 @@ export interface Settings {
     logFormat: LogFormat
     useSystemNotification: boolean
     taskFormat: TaskFormat
+    lowFps: boolean
 }
 
 export default class PomodoroSettings extends PluginSettingTab {
@@ -51,6 +52,7 @@ export default class PomodoroSettings extends PluginSettingTab {
         logFormat: 'VERBOSE',
         useSystemNotification: false,
         taskFormat: 'TASKS',
+        lowFps: false,
     }
 
     static settings: Writable<Settings> = writable(
@@ -108,6 +110,15 @@ export default class PomodoroSettings extends PluginSettingTab {
                     this.updateSettings({ useStatusBarTimer: value })
                 })
             })
+
+		new Setting(containerEl)
+			.setName('Low Animation FPS')
+			.setDesc("If you encounter high CPU usage, you can enable this option to lower the animation FPS to save CPU resources")
+			.addToggle((toggle) => {
+				toggle.onChange((value: boolean) => {
+					this.updateSettings({ lowFps: value })
+				})
+			})
 
         new Setting(containerEl).setHeading().setName('Notification')
 
@@ -190,10 +201,10 @@ export default class PomodoroSettings extends PluginSettingTab {
             dropdown.selectEl.style.width = '160px'
             dropdown.addOptions({ NONE: 'None' })
             if (appHasDailyNotesPluginLoaded()) {
-              dropdown.addOptions({ DAILY: 'Daily note' });
+                dropdown.addOptions({ DAILY: 'Daily note' })
             }
             if (appHasWeeklyNotesPluginLoaded()) {
-              dropdown.addOptions({ WEEKLY: 'Weekly note' });
+                dropdown.addOptions({ WEEKLY: 'Weekly note' })
             }
             dropdown.addOptions({ FILE: 'File' })
             dropdown.setValue(this._settings.logFile)
@@ -265,6 +276,7 @@ export default class PomodoroSettings extends PluginSettingTab {
                         )
                     })
                 })
+
 
             if (this._settings.logFormat == 'CUSTOM') {
                 const logTemplate = new Setting(containerEl).setName(

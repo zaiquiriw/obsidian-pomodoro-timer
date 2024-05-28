@@ -174,10 +174,10 @@ export default class Timer implements Readable<TimerStore> {
             ? { ...this.plugin.tracker.task }
             : { ...DEFAULT_TASK }
 
-		if(!task.path) {
-			task.path = this.plugin.tracker?.file?.path ?? ''
-			task.fileName = this.plugin.tracker?.file?.name ?? ''
-		}
+        if (!task.path) {
+            task.path = this.plugin.tracker?.file?.path ?? ''
+            task.fileName = this.plugin.tracker?.file?.name ?? ''
+        }
 
         return { ...state, task }
     }
@@ -203,7 +203,10 @@ export default class Timer implements Readable<TimerStore> {
             s.lastTick = now
             s.inSession = true
             s.running = true
-            this.clock.postMessage(true)
+            this.clock.postMessage({
+                start: true,
+                lowFps: this.plugin.getSettings().lowFps,
+            })
             return s
         })
     }
@@ -219,7 +222,10 @@ export default class Timer implements Readable<TimerStore> {
         state.count = state.duration * 60 * 1000
         state.inSession = false
         state.running = false
-        this.clock.postMessage(false)
+        this.clock.postMessage({
+            start: false,
+            lowFps: this.plugin.getSettings().lowFps,
+        })
         state.startTime = null
         state.elapsed = 0
         return state
@@ -266,7 +272,10 @@ export default class Timer implements Readable<TimerStore> {
     public pause() {
         this.update((state) => {
             state.running = false
-            this.clock.postMessage(false)
+            this.clock.postMessage({
+                start: false,
+                lowFps: this.plugin.getSettings().lowFps,
+            })
             return state
         })
     }
@@ -286,7 +295,10 @@ export default class Timer implements Readable<TimerStore> {
             if (!this.plugin.tracker!.pinned) {
                 this.plugin.tracker!.clear()
             }
-            this.clock.postMessage(false)
+            this.clock.postMessage({
+                start: false,
+                lowFps: this.plugin.getSettings().lowFps,
+            })
             state.startTime = null
             state.elapsed = 0
             return state
