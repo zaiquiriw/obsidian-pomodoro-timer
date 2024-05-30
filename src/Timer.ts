@@ -42,7 +42,7 @@ const DEFAULT_TASK: TaskItem = {
 export type TimerState = {
     autostart: boolean
     running: boolean
-    lastTick: number
+    // lastTick: number
     mode: Mode
     elapsed: number
     startTime: number | null
@@ -86,7 +86,7 @@ export default class Timer implements Readable<TimerStore> {
             workLen: plugin.getSettings().workLen,
             breakLen: plugin.getSettings().breakLen,
             running: false,
-            lastTick: 0,
+            // lastTick: 0,
             mode: 'WORK',
             elapsed: 0,
             startTime: null,
@@ -137,10 +137,8 @@ export default class Timer implements Readable<TimerStore> {
         let timeup: boolean = false
         let pause: boolean = false
         this.update((s) => {
-            if (s.running && s.lastTick) {
-                let diff = t - s.lastTick
-                s.lastTick = t
-                s.elapsed += diff
+            if (s.running) {
+                s.elapsed += t
                 if (s.elapsed >= s.count) {
                     s.elapsed = s.count
                 }
@@ -200,7 +198,6 @@ export default class Timer implements Readable<TimerStore> {
                 s.count = s.duration * 60 * 1000
                 s.startTime = now
             }
-            s.lastTick = now
             s.inSession = true
             s.running = true
             this.clock.postMessage({

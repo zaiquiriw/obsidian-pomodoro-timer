@@ -115,6 +115,7 @@ export default class PomodoroSettings extends PluginSettingTab {
 			.setName('Low Animation FPS')
 			.setDesc("If you encounter high CPU usage, you can enable this option to lower the animation FPS to save CPU resources")
 			.addToggle((toggle) => {
+				toggle.setValue(this._settings.lowFps)
 				toggle.onChange((value: boolean) => {
 					this.updateSettings({ lowFps: value })
 				})
