@@ -65,7 +65,7 @@ For those requiring more detailed logging, consider setting up a custom [log tem
 ```javascript
 // TimerLog
 {
-    duration: number,  // duratin in minutes
+    duration: number,  // duration in minutes
     session: number,   // session length
     finished: boolean, // if the session is finished?
     mode: string,      // 'WORK' or 'BREAK'
